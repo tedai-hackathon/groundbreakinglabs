@@ -36,3 +36,4 @@ src/next-env.d.ts
 __pycache__
 
 pythonvenv
+*.env
