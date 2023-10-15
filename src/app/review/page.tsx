@@ -1,30 +1,57 @@
+import Logo from "@components/Logo";
 import OverviewSection from "@components/OverviewSection";
 
 const Overview: React.FC = () => {
-  const questionExample =
-    "What does the librarian do before the library opens to the public?";
-
-  const questionOptionsExample = [
-    "She organizes the bookshelves.",
-    "She sips herbal tea and enjoys the quiet.",
-    "She goes for a walk around the lake.",
-    "She meets with aging scholars for discussions.",
+  const questions = [
+    {
+      question: "Why was Julia confident about winning the Bake-Off?",
+      answers: [
+        "She practiced every day.",
+        "She was a renowned chef.",
+        "She had a secret family recipe.",
+        "She had won before.",
+      ],
+    },
+    {
+      question: "Which word in the passage is a synonym for 'scent'?",
+      answers: ["Echoed", "Texture", "Booth", "Aroma"],
+    },
+    {
+      question: "Where did the Great Bake-Off take place?",
+      answers: [
+        "At Julia's home",
+        "In the town of Ovenville's square",
+        "In a big hall",
+        "At the judges' houses",
+      ],
+    },
+    {
+      question: "What is the main idea of the passage?",
+      answers: [
+        "Julia's grandmother was a great baker.",
+        "The town of Ovenville loved to eat cookies.",
+        "Julia wins the Great Bake-Off using her grandmother's secret recipe.",
+        "The judges were from different parts of the country.",
+      ],
+    },
   ];
 
   return (
-    <div className="bg-emerald-600 min-h-screen p-6">
-      <h1 className="text-4xl font-bold mb-8 text-center">Overview</h1>
-      <p className="text-2xl text-center mb-8">
-        Let's review your practice session!
-      </p>
-
+    <div className="bg-emerald-600 text-white min-h-screen p-6">
       <div className="max-w-2xl mx-auto p-6 rounded">
+        <div className="mb-8 flex justify-center">
+          <Logo />
+        </div>
+
+        <h1 className="text-4xl font-bold mb-8">Overview</h1>
+        <p className="text-2xl mb-8">Let's review your practice session!</p>
+
         {/* Main Idea section */}
         <div className="mb-6">
           <OverviewSection name="Main Idea" emoji="💡" />
           <Question
-            title={questionExample}
-            options={questionOptionsExample}
+            title={questions[0].question}
+            options={questions[0].answers}
             correctOption={1}
             selectedOption={2}
           />
@@ -34,8 +61,8 @@ const Overview: React.FC = () => {
         <div className="mb-6">
           <OverviewSection name="Inference" emoji="🙋" />
           <Question
-            title={questionExample}
-            options={questionOptionsExample}
+            title={questions[1].question}
+            options={questions[1].answers}
             correctOption={1}
             selectedOption={1}
           />
@@ -45,8 +72,8 @@ const Overview: React.FC = () => {
         <div className="mb-6">
           <OverviewSection name="Details" emoji="✏️" />
           <Question
-            title={questionExample}
-            options={questionOptionsExample}
+            title={questions[2].question}
+            options={questions[2].answers}
             correctOption={0}
             selectedOption={3}
           />
@@ -56,8 +83,8 @@ const Overview: React.FC = () => {
         <div className="mb-6">
           <OverviewSection name="Vocab" emoji="📕" />
           <Question
-            title={questionExample}
-            options={questionOptionsExample}
+            title={questions[3].question}
+            options={questions[3].answers}
             correctOption={0}
             selectedOption={2}
           />
@@ -81,8 +108,8 @@ const Question: React.FC<QuestionProps> = ({
   selectedOption,
 }) => {
   return (
-    <div className="mb-6">
-      <h3 className="mb-4 text-xl">{title}</h3>
+    <div className="mb-6 bg-white text-black p-5 rounded">
+      <h3 className="mb-4 text-xl font-bold">{title}</h3>
       <div className="space-y-2">
         {options.map((option, index) => (
           <label

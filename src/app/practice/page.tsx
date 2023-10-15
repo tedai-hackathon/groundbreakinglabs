@@ -2,33 +2,49 @@ import Head from "next/head";
 import ReadingPrompt from "@components/Passage/ReadingPrompt";
 import PassageSetOfQuestions from "@components/Passage/PassageSetOfQuestions";
 import Button from "@components/Button";
+import Logo from "@components/Logo";
 
 const question = "Why was Julia confident about winning the Bake-Off?";
 const answers = [
   "She practiced every day.",
   "She was a renowned chef.",
   "She had a secret family recipe.",
-  "She had won before."
+  "She had won before.",
 ];
 
 const questions = [
-    {
-      question: "Why was Julia confident about winning the Bake-Off?",
-      answers: ["She practiced every day.", "She was a renowned chef.", "She had a secret family recipe.", "She had won before."]
-    },
-    {
-      question: "Which word in the passage is a synonym for 'scent'?",
-      answers: ["Echoed", "Texture", "Booth", "Aroma"]
-    },
-    {
-      question: "Where did the Great Bake-Off take place?",
-      answers: ["At Julia's home", "In the town of Ovenville's square", "In a big hall", "At the judges' houses"]
-    },
-    {
-      question: "What is the main idea of the passage?",
-      answers: ["Julia's grandmother was a great baker.", "The town of Ovenville loved to eat cookies.", "Julia wins the Great Bake-Off using her grandmother's secret recipe.", "The judges were from different parts of the country."]
-    },
-  ];
+  {
+    question: "Why was Julia confident about winning the Bake-Off?",
+    answers: [
+      "She practiced every day.",
+      "She was a renowned chef.",
+      "She had a secret family recipe.",
+      "She had won before.",
+    ],
+  },
+  {
+    question: "Which word in the passage is a synonym for 'scent'?",
+    answers: ["Echoed", "Texture", "Booth", "Aroma"],
+  },
+  {
+    question: "Where did the Great Bake-Off take place?",
+    answers: [
+      "At Julia's home",
+      "In the town of Ovenville's square",
+      "In a big hall",
+      "At the judges' houses",
+    ],
+  },
+  {
+    question: "What is the main idea of the passage?",
+    answers: [
+      "Julia's grandmother was a great baker.",
+      "The town of Ovenville loved to eat cookies.",
+      "Julia wins the Great Bake-Off using her grandmother's secret recipe.",
+      "The judges were from different parts of the country.",
+    ],
+  },
+];
 
 export default function Home() {
   return (
@@ -37,7 +53,10 @@ export default function Home() {
         <title>Reading Practice</title>
       </Head>
 
-      <div className="p-8 rounded-md max-w-3xl mx-auto">
+      <div className="p-8 rounded-md max-w-3xl mx-auto text-white">
+        <div className="mb-8 flex justify-center">
+          <Logo />
+        </div>
         <h1 className="text-4xl font-bold mb-4">Reading Practice</h1>
         <p className="mb-10 text-2xl">
           Read this passage and answer some questions.
@@ -51,7 +70,7 @@ export default function Home() {
         />
 
         <div className="mb-4">
-            <PassageSetOfQuestions questions={questions} />
+          <PassageSetOfQuestions questions={questions} />
         </div>
 
         <Button className="w-[125px] mt-5" label={"Submit"} link="review" />
