@@ -2,7 +2,7 @@ import Link from "next/link";
 
 type CustomButtonProps = {
   label: string;
-  onClick?: () => void;
+  onClick?: (e?: any) => void;
   link?: string;
   className?: string;
 };
@@ -13,7 +13,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({ label, onClick, link, class
       className={`bg-white text-black p-2 rounded-full hover:bg-zinc-100 transition duration-200 ${className}`}
       onClick={onClick}
     >
-      {link ? <Link href={link}>{label}</Link> : label}
+      {label}
     </button>
   );
 };

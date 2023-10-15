@@ -9,6 +9,7 @@ from bson.raw_bson import RawBSONDocument
 from bson.objectid import ObjectId
 import random
 import bson
+import json
 
 from prompt import generate
 
@@ -16,7 +17,7 @@ load_dotenv()
 app = Flask(__name__)
 
 PROMPT = {
-    "Passage": " \nThe Grand Bake-Off\nIt was an exciting day in the small town of Sweetville. The annual Grand Bake-Off was about to begin! This event brought together the best bakers in the town to show off their delicious creations. People came from near and far to watch and taste the mouthwatering treats.\nOne of the participants was Emma, a 10-year-old girl with a passion for baking. She loved experimenting with different flavors and ingredients to create unique desserts. For the Bake-Off, Emma decided to make her famous chocolate chip cookies with a twist\u2013 she added a caramel filling.\nAs the judges took their seats at the front of the room, Emma nervously arranged her cookies on a beautifully decorated plate. She couldn't wait for the judges to taste her creation. The Bake-Off was about to begin!\nEach participant presented their dish one by one, explaining the ingredients and techniques used. There were pies, cakes, cookies, and even a towering chocolate fountain. The room filled with the sweet aroma of freshly baked goods.\nFinally, it was Emma's turn. She confidently described her caramel-filled chocolate chip cookies, showcasing her baking skills to the judges. As they took a bite, their faces lit up with delight. The judges were impressed by the combination of the gooey caramel and the soft, melt-in-your-mouth cookies.\nAfter tasting all the delicious treats, the judges had the difficult task of selecting the winners. The participants anxiously waited for the results. When the winners were announced, the room erupted with applause.\nEmma couldn't believe her ears when her name was called as the first-place winner in the Kids' Category! Her caramel-filled chocolate chip cookies had won the hearts of the judges and the crowd. She proudly accepted her prize, a shiny blue ribbon, and smiled from ear to ear.\nThe Grand Bake-Off was a great success, leaving everyone with smiles on their faces and full bellies. Emma knew that baking was not just about creating delicious food, but also about bringing joy to others through her sweet creations.\n\n",
+    "Passage": " \nThe Lame Bake-Off\nIt was an exciting day in the small town of Sweetville. The annual Grand Bake-Off was about to begin! This event brought together the best bakers in the town to show off their delicious creations. People came from near and far to watch and taste the mouthwatering treats.\nOne of the participants was Emma, a 10-year-old girl with a passion for baking. She loved experimenting with different flavors and ingredients to create unique desserts. For the Bake-Off, Emma decided to make her famous chocolate chip cookies with a twist\u2013 she added a caramel filling.\nAs the judges took their seats at the front of the room, Emma nervously arranged her cookies on a beautifully decorated plate. She couldn't wait for the judges to taste her creation. The Bake-Off was about to begin!\nEach participant presented their dish one by one, explaining the ingredients and techniques used. There were pies, cakes, cookies, and even a towering chocolate fountain. The room filled with the sweet aroma of freshly baked goods.\nFinally, it was Emma's turn. She confidently described her caramel-filled chocolate chip cookies, showcasing her baking skills to the judges. As they took a bite, their faces lit up with delight. The judges were impressed by the combination of the gooey caramel and the soft, melt-in-your-mouth cookies.\nAfter tasting all the delicious treats, the judges had the difficult task of selecting the winners. The participants anxiously waited for the results. When the winners were announced, the room erupted with applause.\nEmma couldn't believe her ears when her name was called as the first-place winner in the Kids' Category! Her caramel-filled chocolate chip cookies had won the hearts of the judges and the crowd. She proudly accepted her prize, a shiny blue ribbon, and smiled from ear to ear.\nThe Grand Bake-Off was a great success, leaving everyone with smiles on their faces and full bellies. Emma knew that baking was not just about creating delicious food, but also about bringing joy to others through her sweet creations.\n\n",
     "Question": [
         {
             "question": "1. What was the special twist that Emma added to her chocolate chip cookies?",
@@ -105,7 +106,7 @@ def add_student():
     # Insert the new student into the MongoDB collection
     inserted_id = coll.insert_one(student).inserted_id
     
-    return jsonify({"message": f"Student added successfully with id { inserted_id }!"}), 201
+    return jsonify(json.loads(bson_dumps({"id": inserted_id}))), 201
 
 # API endpoint to get student data by email
 @app.route("/api/student/<id>", methods=["GET"])
@@ -117,7 +118,7 @@ def get_student(id):
     else:
         return jsonify({"message": "Student not found"}), 404
 
-@app.route("/api/student/generate/<id>", methods=["GET"])
+@app.route("/api/generate/<id>", methods=["GET"])
 def generate_prompt(id):
     data = bson.decode(get_student_by_id(id).raw)
     interests = data["interests"]
@@ -129,6 +130,7 @@ def generate_prompt(id):
 
     try:
         prompt = generate(picked_interest, question_types)
+        # prompt = PROMPT
 
         data["rounds"].append({
             "text": prompt["Passage"],
@@ -142,6 +144,7 @@ def generate_prompt(id):
             "questions": prompt["Question"]
         }), 200
     except Exception as e:
+        console.log(e)
         return jsonify({"message": f"Error generating prompt {e}"}), 500
     
 @app.route("/api/student/answer", methods=["POST"])
