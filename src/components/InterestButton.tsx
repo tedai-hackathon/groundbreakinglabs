@@ -5,7 +5,7 @@ interface ToggleButtonProps {
   label: string;
 }
 
-const ToggleButton: FC<ToggleButtonProps> = ({ label }) => {
+const InterestButton: FC<ToggleButtonProps> = ({ label }) => {
   const [isActive, setIsActive] = useState(false);
 
   return (
@@ -20,4 +20,4 @@ const ToggleButton: FC<ToggleButtonProps> = ({ label }) => {
   );
 };
 
-export default ToggleButton;
+export default InterestButton;
