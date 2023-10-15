@@ -86,7 +86,7 @@ def get_student_by_id(id):
 def add_student():
     data = request.get_json()
     # email = data.get("email")
-    # interests = data.get("interests")
+    interests = data.get("interests")
     # sessions = data.get("sessions")
     # fname = data.get("fname")
     # lname = data.get("lname")
@@ -94,9 +94,16 @@ def add_student():
     # # Create a new student object
     # new_student = Student(email=email, interests=interests, sessions=sessions, fname=fname, lname=lname)
 
-    bson_bytes = bsonjs.loads(bson_dumps(data))
+    student = {
+        "email": "potter.harry@hogwarts.edu",
+        "interests": interests,
+        "rounds": [],
+        "fname": "Harry",
+        "lname": "Potter"
+    }
+
     # Insert the new student into the MongoDB collection
-    inserted_id = coll.insert_one(RawBSONDocument(bson_bytes)).inserted_id
+    inserted_id = coll.insert_one(student).inserted_id
     
     return jsonify({"message": f"Student added successfully with id { inserted_id }!"}), 201
 
@@ -112,9 +119,10 @@ def get_student(id):
 
 @app.route("/api/student/generate/<id>", methods=["GET"])
 def generate_prompt(id):
-    data = get_student_by_id(id)["interests"]
+    data = bson.decode(get_student_by_id(id).raw)
+    interests = data["interests"]
     # todo: this is random for right now
-    picked_interest = data[random.randint(0, len(data) - 1)]
+    picked_interest = interests[random.randint(0, len(interests) - 1)]
 
     # default for now
     question_types = ["Inference", "Vocab", "Details", "Main Ideas"]
@@ -122,18 +130,19 @@ def generate_prompt(id):
     try:
         prompt = generate(picked_interest, question_types)
 
-        # todo: not putting stuff correctly
-        coll["sessions"].update_one({"_id": ObjectId(id)}, {"$push": {"rounds": [{
+        data["rounds"].append({
             "text": prompt["Passage"],
             "questions": prompt["Question"]
-        }]}})
+        })
+
+        coll.update_one({"_id": ObjectId(id)}, {"$set": data})
 
         return jsonify({
             "text": prompt["Passage"],
             "questions": prompt["Question"]
         }), 200
     except Exception as e:
-        print(e)
+        return jsonify({"message": f"Error generating prompt {e}"}), 500
     
 @app.route("/api/student/answer", methods=["POST"])
 def answer():
@@ -147,16 +156,15 @@ def answer():
     ret = []
     if student_data:
         for index, answer in enumerate(answers):
-            new_q = student_data["sessions"][-1]["rounds"][-1]["questions"][index] | {
+            new_q = student_data["rounds"][-1]["questions"][index] | {
                 "selected_answer": answer,
             }
 
-            sessions_len = len(student_data["sessions"]) - 1
-            rounds_len = len(student_data["sessions"][-1]["rounds"]) - 1
+            rounds_len = len(student_data["rounds"]) - 1
 
-            coll.update_one({"_id": ObjectId(student_id)}, {"$set": {f"sessions.{ sessions_len }.rounds.{ rounds_len }.questions.{ index }": new_q}})
+            coll.update_one({"_id": ObjectId(student_id)}, {"$set": {f"rounds.{ rounds_len }.questions.{ index }": new_q}})
 
-            ret.append(answer == student_data["sessions"][-1]["rounds"][-1]["questions"][index]["correct_answer"])
+            ret.append(answer == student_data["rounds"][-1]["questions"][index]["correct_answer"])
 
         return jsonify({"answer_validation": ret}), 200
     else:
