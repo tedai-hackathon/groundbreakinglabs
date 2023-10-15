@@ -9,6 +9,7 @@ from bson.raw_bson import RawBSONDocument
 from bson.objectid import ObjectId
 import random
 import bson
+import json
 
 from prompt import generate
 
@@ -105,7 +106,7 @@ def add_student():
     # Insert the new student into the MongoDB collection
     inserted_id = coll.insert_one(student).inserted_id
     
-    return jsonify({"message": f"Student added successfully with id { inserted_id }!"}), 201
+    return jsonify(json.loads(bson_dumps({"id": inserted_id}))), 201
 
 # API endpoint to get student data by email
 @app.route("/api/student/<id>", methods=["GET"])

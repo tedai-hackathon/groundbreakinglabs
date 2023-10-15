@@ -4,12 +4,15 @@ import Head from 'next/head';
 import InterestButton from '@components/InterestButton';
 import Link from 'next/link';
 import Button from '@components/Button';
+import { useAtom } from 'jotai';
+import { studentIdAtom } from '@/atoms';
 
 export default function Home() {
     const [interests, setInterests] = useState<string[]>([]);
+    const [studentId, setStudentId] = useAtom(studentIdAtom);
 
     const handleSubmit = async (e: any) => {
-      e.preventDefault();
+        e.preventDefault();
         const response = await fetch('/api/student/new', {
             method: 'POST',
             headers: {
@@ -17,8 +20,9 @@ export default function Home() {
             },
             body: JSON.stringify({ interests: interests }),
         });
+
         const data = await response.json();
-        console.log(data);
+        setStudentId(data['id']['$oid']);
     };
 
     const handleInterestClick = (interest: string) => {

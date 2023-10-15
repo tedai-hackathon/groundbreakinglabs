@@ -2,7 +2,7 @@ import Link from "next/link";
 
 type CustomButtonProps = {
   label: string;
-  onClick?: () => void;
+  onClick?: (e?: any) => void;
   link?: string;
   className?: string;
   type?: "button" | "submit";
