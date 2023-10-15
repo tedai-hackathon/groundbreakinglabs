@@ -54,7 +54,7 @@ export default function Home() {
             <PassageSetOfQuestions questions={questions} />
         </div>
 
-        <Button className="w-[125px] mt-5" label={"Submit"} />
+        <Button className="w-[125px] mt-5" label={"Submit"} link="review" />
       </div>
     </div>
   );
