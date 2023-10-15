@@ -2,20 +2,32 @@
 import openai
 import json
 import time
+from dotenv import load_dotenv
+import os
 
-def generate(passions):
-    f = open("apikey.txt", "r")
-    key = f.readline()
-    f.close() 
-    openai.api_key = key
+load_dotenv()
 
+def data_clean(data, types):
+    out = []
+    for i in range(len(data["Question"])):
+        question = {}
+        question["question"] = data["Question"][i][0]
+        question["correct_answer"] = ord(data["Answers"][i].lower()) - 97
+        question["answers"] = data["Question"][i][1:]
+        question["type"] = types[i]
+        
+        out.append(question)
+    data["Question"] = out
+    del data["Answers"]
 
+def generate(passions, categories):
+    openai.api_key = os.getenv('OPENAI_API_KEY')
 
     messages = [ {"role": "system","content": "You are an expert educator"} ]
 
 
     message = '''
-    Write me a passage about one or more people with random names at fourth-grade reading level based loosely on exactly one of my passions. Ask me 4 multiple choice question to demonstrate my reading comprehension, also fourth-grade level. The answers to these questions should not be explicitly stated in the text, but should also not be ambiguous. Also provide the answer. It should be in the following format: Passage: _passage_ Questions: _questions_ Answers: _answers:
+    Write me a passage about one or more people with random names at fourth-grade reading level based loosely on exactly one of my passions. Ask me 4 multiple choice question to demonstrate my reading comprehension, also fourth-grade level. The first question should be about ''' + categories[0] + '''; the second question should be about ''' + categories[1] + '''; the third question should be about ''' + categories[2] + '''; the fourth question should be about ''' + categories[3] + '''. The answers to these questions should not be explicitly stated in the text, but should also not be ambiguous. Also provide the answer. It should be in the following format: Passage: _passage_ Questions: _questions_ Answers: _answers:
 
     Example 1:
     My passions: farms
@@ -228,6 +240,6 @@ def generate(passions):
     data['Passage'] = passage
     data["Question"] = questionArr
     data["Answers"] = letters
+    data_clean(data,categories)
     return data
     #print(data)
-generate("dancing")
