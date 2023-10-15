@@ -2,14 +2,12 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import InterestButton from '@components/InterestButton';
-import Link from 'next/link';
 import Button from '@components/Button';
-import { useAtom } from 'jotai';
-import { studentIdAtom } from '@/atoms';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
     const [interests, setInterests] = useState<string[]>([]);
-    const [studentId, setStudentId] = useAtom(studentIdAtom);
+    const router = useRouter();
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
@@ -21,8 +19,10 @@ export default function Home() {
             body: JSON.stringify({ interests: interests }),
         });
 
-        const data = await response.json();
-        setStudentId(data['id']['$oid']);
+        return await response.json().then((data) => {
+            localStorage.setItem('studentID', data['id']['$oid']);
+            router.push('/practice');
+        });
     };
 
     const handleInterestClick = (interest: string) => {
@@ -128,7 +128,6 @@ export default function Home() {
                             type="submit"
                             label="Let's start"
                             className="w-1/3 bg-red-400"
-                            link="/practice"
                             onClick={handleSubmit}
                         />
                     </div>

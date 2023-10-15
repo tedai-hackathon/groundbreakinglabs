@@ -21,7 +21,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       onClick={onClick}
       type={type}
     >
-      {link ? <Link href={link}>{label}</Link> : label}
+      {label}
     </button>
   );
 };
