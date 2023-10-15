@@ -3,14 +3,18 @@ import { FC, useState } from 'react';
 
 interface ToggleButtonProps {
   label: string;
+  callback: () => void;
 }
 
-const ToggleButton: FC<ToggleButtonProps> = ({ label }) => {
+const InterestButton: FC<ToggleButtonProps> = ({ label, callback }) => {
   const [isActive, setIsActive] = useState(false);
 
   return (
     <button
-      onClick={() => setIsActive(!isActive)}
+      onClick={() => {
+        callback();
+        setIsActive(!isActive);
+      }}
       className={`whitespace-nowrap rounded-full py-2 px-4 transition-colors duration-300 ${
         isActive ? 'bg-zinc-700 text-white' : 'bg-white text-black'
       }`}
@@ -20,4 +24,4 @@ const ToggleButton: FC<ToggleButtonProps> = ({ label }) => {
   );
 };
 
-export default ToggleButton;
+export default InterestButton;
